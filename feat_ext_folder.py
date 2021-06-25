@@ -20,5 +20,5 @@ for vid in listing:
         if not ret : break
         location = './data/'+vid
         cv2.imwrite(os.path.join(location , "frame%d.jpg"  % counter), frame)
-        # cv2.imwrite("frame%d.jpg" % counter, frame) 
-        counter = counter + 1 
+# cv2.imwrite("frame%d.jpg" % counter, frame) 
+    counter = counter + 1 
