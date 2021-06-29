@@ -3,7 +3,7 @@ import os
 import cv2
 import sys
 import tqdm
-from typing import Sequence
+from typing import Sequence, final
 import h5py
 import time
 import datetime
@@ -22,6 +22,9 @@ import torch.backends.cudnn as cudnn
 from torch.optim import lr_scheduler
 from torch.distributions import Bernoulli
 from config import config
+import pandas as pd
+import itertools
+
 
 torch.manual_seed(config.SEED)
 os.environ["CUDA_VISIBLE_DEVCIES"] = config.GPU
@@ -257,32 +260,28 @@ def frm2video(frm_dir, summary):
     # frm2video(args.frm_dir, summary, vid_writer)
     vid_writer.release()
     
+
+    frame_list = []
+    
+
     for idx, val in enumerate(summary):
-        # print(type(summary))
-        # print("****************************************************")
-        
-        try:
-            frame_list = []
-            if val == 1:
-                # here frame name starts with '000001.jpg'
-                # change according to your need
-                frm_name = str(idx) + '.jpg' # zfill to zfill(6), delete zfill
-                frame_list.append(frm_name)
-                frm_path = osp.join(frm_dir, frm_name)
-                print(frm_path)
-                frm = cv2.imread(frm_path)
-                print(frm)
-                print("***********")
-                frm = cv2.resize(frm, (args.width, args.height))
-                # import pdb;pdb.set_trace()
-                vid_writer.write(frm)
-        except:
-            # pdb.set_trace()
-            print()
+       
+        # frame_list = []
+        if val == 1:
+            # here frame name starts with '000001.jpg'
+            # change according to your need
+            frm_name = int(str(idx))   # zfill to zfill(6), delete zfill
+            frame_list.append(frm_name)
+
+    frame_list.sort()
+
+    return frame_list
+
 
 def main():
     dataset = ['./dataset/video5.h5','./dataset/video7.h5']
     summary_list = []
+    combined_sum = []
     for index, item in enumerate(dataset):
         compute_rewards = compute_reward(item)
         summary_list.append(compute_rewards)
@@ -291,8 +290,21 @@ def main():
     frm_dir = ["./data/video1","./data/video2"]
     for index, item in enumerate(frm_dir):
         print(summary_list[index])
-        frm2video(item, summary_list[index])
+        
+        combined_sum.append(frm2video(item, summary_list[index]))
 
+    print("*******")
+    # print(combined_sum)
+    one_list = list(itertools.chain.from_iterable(combined_sum))
+    one_list.sort()
+    print(one_list)
+    
+    
 
 if __name__ == '__main__':
     main()
+
+
+# import itertools
+# a = [[0, 15, 30, 45, 75, 105],[0, 15, 30, 45, 75, 105]]
+# print(list(itertools.chain.from_iterable(a)))
