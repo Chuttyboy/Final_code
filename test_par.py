@@ -267,7 +267,7 @@ def frm2video(frm_dir, summary):
                 # here frame name starts with '000001.jpg'
                 # change according to your need
                 frm_name = str(idx) + '.jpg' # zfill to zfill(6), delete zfill
-                frame_list.append(frm_name)
+                # frame_list.append(frm_name)
                 frm_path = osp.join(frm_dir, frm_name)
                 print(frm_path)
                 frm = cv2.imread(frm_path)
